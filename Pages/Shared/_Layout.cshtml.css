@@ -1,0 +1,43 @@
+﻿a.navbar-brand {
+    white-space: normal;
+    text-align: left;
+    word-break: break-word;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ff0000;
+    text-decoration: none;
+    position: absolute;
+    top: 10px;
+    left: 20px;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: #fff; /* White background */
+    padding: 10px 0;
+    border-bottom: none; /* Removed the line */
+}
+
+nav {
+    border-bottom: none; /* Removed border if applied to nav */
+    box-shadow: none; /* Removed shadow if present */
+}
+
+body {
+    padding-top: 60px; /* Matches header height */
+}
+
+/* Footer remains at the bottom */
+.footer {
+    position: fixed; /* Fix footer to the bottom */
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px;
+    background-color: #f8f9fa; /* Light background for footer */
+    text-align: center;
+}

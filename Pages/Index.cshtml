@@ -1,0 +1,29 @@
+﻿@page
+@model MusicLibrary.Pages.IndexModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<head>
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/loginstyle.css" />
+</head>
+
+<h2>Login</h2>
+
+<form method="post">
+    <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="Username" class="form-control" placeholder="Enter your username" required />
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="Password" class="form-control" placeholder="Enter your password" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Login</button>
+</form>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <p style="color: red;">@Model.ErrorMessage</p>
+}

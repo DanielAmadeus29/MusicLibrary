@@ -1,0 +1,16 @@
+﻿@page
+@model MusicLibrary.Pages.HomePageModel
+@{
+    ViewData["Title"] = "HomePage";
+}
+
+<div class="homepage-container">
+    <h1>Welcome to MusicLibrary</h1>
+    <p>You have successfully logged in! Explore your music library and enjoy.</p>
+
+    <div class="homepage-actions">
+        <a href="/Account/Profile" class="btn btn-primary">Go to Profile</a>
+        <a href="/Account/Logout" class="btn btn-secondary">Logout</a>
+    </div>
+</div>
+
