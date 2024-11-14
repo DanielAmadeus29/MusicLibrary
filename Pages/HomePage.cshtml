@@ -1,16 +1,32 @@
 ﻿@page
 @model MusicLibrary.Pages.HomePageModel
 @{
-    ViewData["Title"] = "HomePage";
+    ViewData["Title"] = "Home - Music Library";
 }
 
-<div class="homepage-container">
-    <h1>Welcome to MusicLibrary</h1>
-    <p>You have successfully logged in! Explore your music library and enjoy.</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/homepagestyle.css" />
+</head>
+<body>
+    <header class="navbar">
+        <h1>Music Library</h1>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/Library">Library</a>
+            <a href="/Account">Account</a>
+            <a href="/Logout">Logout</a>
+        </nav>
+    </header>
 
-    <div class="homepage-actions">
-        <a href="/Account/Profile" class="btn btn-primary">Go to Profile</a>
-        <a href="/Account/Logout" class="btn btn-secondary">Logout</a>
+    <div class="content">
+        <h2>Welcome to Music Library</h2>
+        <p>Your personal music collection, all in one place.</p>
+        <button onclick="location.href='/Library'">Explore Your Library</button>
     </div>
-</div>
-
+</body>
+</html>

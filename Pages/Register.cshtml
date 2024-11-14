@@ -1,15 +1,14 @@
 ﻿@page
-@model MusicLibrary.Pages.IndexModel
+@model MusicLibrary.Pages.RegisterModel
 @{
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = "Register";
 }
-
 <head>
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/css/loginstyle.css" />
 </head>
 
-<h2>Login</h2>
+<h2>Register</h2>
 
 <form method="post">
     <div class="form-group">
@@ -20,7 +19,11 @@
         <label for="password">Password</label>
         <input type="password" id="password" name="Password" class="form-control" placeholder="Enter your password" required />
     </div>
-    <button type="submit" class="btn btn-primary">Login</button>
+    <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" id="confirmPassword" name="ConfirmPassword" class="form-control" placeholder="Confirm your password" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Register</button>
 </form>
 
 @if (!string.IsNullOrEmpty(Model.ErrorMessage))
@@ -28,6 +31,7 @@
     <p style="color: red;">@Model.ErrorMessage</p>
 }
 
-<p class="register-link">
-    Don't have an account? <a href="/Register">Register now</a>.
-</p>
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+    <p style="color: green;">@Model.SuccessMessage</p>
+}

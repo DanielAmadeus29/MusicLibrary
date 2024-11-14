@@ -13,6 +13,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Build the application
 var app = builder.Build();
 
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+
 // Configure the middleware pipeline
 app.UseStaticFiles();
 app.UseRouting();
@@ -20,3 +25,4 @@ app.UseAuthorization();
 app.MapRazorPages();
 
 app.Run();
+
