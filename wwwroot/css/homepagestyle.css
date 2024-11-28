@@ -1,80 +1,66 @@
-﻿/* General Reset */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-}
-
-/* Navbar */
+﻿/* Black Bar at the Top */
 .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #007bff;
-    color: white;
-    padding: 15px 20px;
+    background-color: black; /* Black background */
+    color: white; /* White text for contrast */
+    padding: 1rem 2rem; /* Spacing inside the bar */
+    position: fixed; /* Keeps the bar at the top when scrolling */
+    top: 0;
+    left: 0;
+    width: 100%; /* Full width of the page */
+    z-index: 1000; /* Stays on top of other content */
 }
 
-    .navbar h1 {
-        font-size: 1.5rem;
+/* Flexbox for Layout */
+.navbar-container {
+    display: flex; /* Horizontal layout */
+    justify-content: space-between; /* Space between title and nav */
+    align-items: center; /* Center items vertically */
+}
+
+/* Navbar Title */
+.navbar h1 {
+    font-size: 1.5rem; /* Adjust font size */
+    margin: 0; /* Remove default margin */
+}
+
+/* Navbar Links */
+.navbar a {
+    color: white; /* White text for links */
+    text-decoration: none; /* Remove underline */
+    font-size: 1rem; /* Adjust font size */
+    margin-left: 1rem; /* Space between links */
+}
+
+    .navbar a:hover {
+        color: gray; /* Gray color on hover */
     }
 
-    .navbar nav {
-        display: flex;
-        gap: 20px;
-    }
-
-    .navbar a {
-        color: white;
-        text-decoration: none;
-        font-size: 1rem;
-        transition: color 0.3s ease;
-    }
-
-        .navbar a:hover {
-            color: #ffdd57;
-        }
-
-/* Content Section */
+/* Main Content */
 .content {
-    text-align: center;
-    margin-top: 50px;
+    margin-top: 5rem; /* Prevent content from being hidden under the navbar */
+    text-align: center; /* Center-align content */
+    padding: 2rem; /* Add padding to the main section */
 }
 
     .content h2 {
-        font-size: 2rem;
-        color: #333;
-        margin-bottom: 20px;
+        font-size: 2rem; /* Adjust heading size */
     }
 
     .content p {
-        font-size: 1.2rem;
-        color: #555;
-        margin-bottom: 30px;
+        font-size: 1.2rem; /* Adjust paragraph font size */
+        margin: 0.5rem 0; /* Add spacing between paragraphs */
     }
 
     .content button {
-        padding: 10px 20px;
-        font-size: 1rem;
-        color: white;
-        background-color: #007bff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
+        background-color: #007bff; /* Button background */
+        color: white; /* Button text color */
+        border: none; /* Remove border */
+        padding: 0.8rem 1.2rem; /* Add padding */
+        font-size: 1rem; /* Adjust font size */
+        border-radius: 5px; /* Rounded corners */
+        cursor: pointer; /* Pointer cursor */
     }
 
         .content button:hover {
-            background-color: #0056b3;
+            background-color: #0056b3; /* Darker blue on hover */
         }
-
-/* Footer */
-footer {
-    margin-top: 50px;
-    text-align: center;
-    padding: 20px;
-    background-color: #f4f4f4;
-    color: #555;
-    font-size: 0.9rem;
-}

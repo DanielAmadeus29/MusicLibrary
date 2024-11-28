@@ -10,23 +10,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"]</title>
-    <link rel="stylesheet" href="~/css/homepagestyle.css" />
+    <link rel="stylesheet" href="/css/homepagestyle.css" />
 </head>
 <body>
+    <!-- Top Black Bar -->
     <header class="navbar">
-        <h1>Music Library</h1>
-        <nav>
-            <a href="/Logout">Logout</a>
-        </nav>
+        <div class="navbar-container">
+            <h1>Music Library</h1>
+            <nav>
+                <a href="/Logout">Logout</a>
+            </nav>
+        </div>
     </header>
+
+    <!-- Main Content -->
     <div class="content">
         <h2>Welcome to Music Library</h2>
         <p>Your personal music collection, all in one place.</p>
         <p>Welcome to Music Library, <strong>@Model.Username</strong>!</p>
         <button onclick="location.href='/AddSong'">Add Song</button>
     </div>
-
-
-
 </body>
 </html>
