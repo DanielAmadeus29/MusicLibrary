@@ -1,12 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MusicLibrary.Models;
+using MusicLibrary.Models; // Ensure the namespace for UserMusic is included
 
-namespace MusicLibrary.Data
+public class ApplicationDbContext : DbContext
 {
-    public class ApplicationDbContext : DbContext
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : base(options)
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
-
-        public DbSet<User> Users { get; set; }
     }
+
+    public DbSet<User> Users { get; set; } // Existing Users table
+    public DbSet<UserMusic> UserMusic { get; set; } // Add this line for UserMusic
 }
