@@ -1,24 +1,27 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
+using MusicLibrary.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace MusicLibrary.Pages
+public class HomePageModel : PageModel
 {
-    [Authorize]
-    public class HomePageModel : PageModel
+    private readonly ApplicationDbContext _dbContext;
+
+    public HomePageModel(ApplicationDbContext dbContext)
     {
-        public string Username { get; private set; }
-        public string DebugInfo { get; private set; }
+        _dbContext = dbContext;
+    }
 
-        public void OnGet()
-        {
-            // Debug: List all claims
-            DebugInfo = string.Join(", ", User.Claims.Select(c => $"{c.Type}: {c.Value}"));
+    public List<UserMusic> Songs { get; set; } = new List<UserMusic>();
+    public string Username { get; set; } = "Guest";
 
-            // Retrieve Username from claims
-            Username = User.Identity.IsAuthenticated
-                ? User.FindFirst(ClaimTypes.Name)?.Value ?? "Unknown User"
-                : "Guest";
-        }
+    public async Task OnGetAsync()
+    {
+        int userId = 2; // Replace with logic to fetch the logged-in user's ID
+        Songs = await _dbContext.UserMusic
+            .Where(song => song.UserId == userId)
+            .ToListAsync();
+
+        var user = await _dbContext.Users.FindAsync(userId);
+        Username = user?.Username ?? "Guest";
     }
 }

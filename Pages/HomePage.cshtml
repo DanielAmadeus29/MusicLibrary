@@ -1,5 +1,5 @@
 ﻿@page
-@model MusicLibrary.Pages.HomePageModel
+@model HomePageModel
 @{
     ViewData["Title"] = "Home - Music Library";
 }
@@ -13,7 +13,6 @@
     <link rel="stylesheet" href="/css/homepagestyle.css" />
 </head>
 <body>
-    <!-- Top Black Bar -->
     <header class="navbar">
         <div class="navbar-container">
             <h1>Music Library</h1>
@@ -23,12 +22,28 @@
         </div>
     </header>
 
-    <!-- Main Content -->
     <div class="content">
         <h2>Welcome to Music Library</h2>
         <p>Your personal music collection, all in one place.</p>
         <p>Welcome to Music Library, <strong>@Model.Username</strong>!</p>
+
         <button onclick="location.href='/AddSong'">Add Song</button>
+
+        <h2>Your Songs</h2>
+        <p>Number of Songs: @Model.Songs.Count</p>
+
+        <ul>
+            @foreach (var song in Model.Songs)
+            {
+                <li>
+                    <strong>@song.Title</strong> by @song.Artist<br />
+                    <audio controls>
+                        <source src="@song.FilePath" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </li>
+            }
+        </ul>
     </div>
 </body>
 </html>

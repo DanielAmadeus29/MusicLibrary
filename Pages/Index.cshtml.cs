@@ -26,16 +26,17 @@ namespace MusicLibrary.Pages
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
+            // Find user by username and password
             var user = _dbContext.Users.FirstOrDefault(u => u.Username == Username && u.Password == Password);
 
             if (user != null)
             {
                 // Create claims
                 var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Name, user.Username), // Username claim
-            new Claim("UserId", user.Id.ToString())   // User ID claim
-        };
+                {
+                    new Claim(ClaimTypes.Name, user.Username),                // Username claim
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()) // User ID claim
+                };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
@@ -44,7 +45,7 @@ namespace MusicLibrary.Pages
                     IsPersistent = true
                 };
 
-                // Sign in user
+                // Sign in the user
                 await HttpContext.SignInAsync(
                     CookieAuthenticationDefaults.AuthenticationScheme,
                     new ClaimsPrincipal(claimsIdentity),
@@ -60,6 +61,7 @@ namespace MusicLibrary.Pages
                 return RedirectToPage("/HomePage");
             }
 
+            // If login fails
             ErrorMessage = "Invalid username or password.";
             return Page();
         }
