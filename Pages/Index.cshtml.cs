@@ -17,17 +17,25 @@ namespace MusicLibrary.Pages
         }
 
         [BindProperty]
-        public string Username { get; set; }
+        public string Username { get; set; } = string.Empty;
 
         [BindProperty]
-        public string Password { get; set; }
+        public string Password { get; set; } = string.Empty;
 
-        public string ErrorMessage { get; set; }
+        public string ErrorMessage { get; set; } = string.Empty;
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
+            // Validate inputs
+            if (string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Password))
+            {
+                ErrorMessage = "Username and Password are required.";
+                return Page();
+            }
+
             // Find user by username and password
-            var user = _dbContext.Users.FirstOrDefault(u => u.Username == Username && u.Password == Password);
+            var user = _dbContext.Users
+                .FirstOrDefault(u => u.Username == Username && u.Password == Password);
 
             if (user != null)
             {
@@ -42,7 +50,7 @@ namespace MusicLibrary.Pages
 
                 var authProperties = new AuthenticationProperties
                 {
-                    IsPersistent = true
+                    IsPersistent = true // Persistent cookies
                 };
 
                 // Sign in the user

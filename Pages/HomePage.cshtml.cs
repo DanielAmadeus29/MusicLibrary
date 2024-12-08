@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using MusicLibrary.Models;
 using Microsoft.EntityFrameworkCore;
+using MusicLibrary.Models;
+using System.Security.Claims;
 
 public class HomePageModel : PageModel
 {
@@ -16,12 +17,22 @@ public class HomePageModel : PageModel
 
     public async Task OnGetAsync()
     {
-        int userId = 2; // Replace with logic to fetch the logged-in user's ID
-        Songs = await _dbContext.UserMusic
-            .Where(song => song.UserId == userId)
-            .ToListAsync();
+        // Check if the user is authenticated
+        if (User.Identity.IsAuthenticated)
+        {
+            // Get the user ID from the claims
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
-        var user = await _dbContext.Users.FindAsync(userId);
-        Username = user?.Username ?? "Guest";
+            // Retrieve the user's songs and username from the database
+            var user = await _dbContext.Users.FindAsync(userId);
+            if (user != null)
+            {
+                Songs = await _dbContext.UserMusic
+                    .Where(song => song.UserId == user.Id)
+                    .ToListAsync();
+
+                Username = user.Username;
+            }
+        }
     }
 }

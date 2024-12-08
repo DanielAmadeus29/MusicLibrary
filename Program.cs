@@ -1,13 +1,17 @@
-using MusicLibrary.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using MusicLibrary.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services
+// Add Razor Pages
 builder.Services.AddRazorPages();
+
+// Configure DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MusicLibraryDatabase")));
+
+// Add Cookie Authentication
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -19,6 +23,7 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+// Error page for development
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -26,8 +31,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseStaticFiles();
 app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
+app.UseAuthentication(); // Enable cookie-based authentication
+app.UseAuthorization(); // Enable authorization
 
 app.MapRazorPages();
+
 app.Run();
