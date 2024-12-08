@@ -15,35 +15,43 @@
 <body>
     <header class="navbar">
         <div class="navbar-container">
-            <h1>Music Library</h1>
+            <h1>🎵 Music Library</h1>
             <nav>
-                <a href="/Logout">Logout</a>
+                <a href="/Index">Logout</a>
             </nav>
         </div>
     </header>
 
-    <div class="content">
-        <h2>Welcome to Music Library</h2>
-        <p>Your personal music collection, all in one place.</p>
-        <p>Welcome to Music Library, <strong>@Model.Username</strong>!</p>
+    <main class="main-content">
+        <aside class="sidebar">
+        
+        </aside>
 
-        <button onclick="location.href='/AddSong'">Add Song</button>
+        <section class="content">
+            <h2>Welcome, <strong>@Model.Username</strong>!</h2>
+            <p>Your personal music collection, all in one place.</p>
 
-        <h2>Your Songs</h2>
-        <p>Number of Songs: @Model.Songs.Count</p>
+            <div class="add-song-btn">
+                <button onclick="location.href='/AddSong'">Add Song</button>
+            </div>
 
-        <ul>
-            @foreach (var song in Model.Songs)
-            {
-                <li>
-                    <strong>@song.Title</strong> by @song.Artist<br />
-                    <audio controls>
-                        <source src="@song.FilePath" type="audio/mpeg">
-                        Your browser does not support the audio element.
-                    </audio>
-                </li>
-            }
-        </ul>
-    </div>
+            <h2>Your Songs</h2>
+            <p>Number of Songs: @Model.Songs.Count</p>
+
+            <div class="songs-list">
+                @foreach (var song in Model.Songs)
+                {
+                    <div class="song-item">
+                        <h3>@song.Title</h3>
+                        <p>by @song.Artist</p>
+                        <audio controls>
+                            <source src="@song.FilePath" type="audio/mpeg">
+                            Your browser does not support the audio element.
+                        </audio>
+                    </div>
+                }
+            </div>
+        </section>
+    </main>
 </body>
 </html>

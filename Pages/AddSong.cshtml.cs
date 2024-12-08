@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MusicLibrary.Models;
-using System;
-using System.IO;
-using System.Threading.Tasks;
+using System.Security.Claims;
 
 namespace MusicLibrary.Pages
 {
@@ -17,68 +15,55 @@ namespace MusicLibrary.Pages
         }
 
         [BindProperty]
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
         [BindProperty]
-        public string Artist { get; set; }
+        public string Artist { get; set; } = string.Empty;
 
         [BindProperty]
         public IFormFile MusicFile { get; set; }
 
-        public string Message { get; set; }
+        public string ErrorMessage { get; set; } = string.Empty;
 
         public async Task<IActionResult> OnPostAsync()
         {
-            try
+            if (!User.Identity.IsAuthenticated)
             {
-                // Validate user
-                var userId = User.FindFirst("UserId")?.Value;
-                if (string.IsNullOrEmpty(userId))
-                {
-                    Message = "You must be logged in to add a song.";
-                    return Page();
-                }
-
-                // Validate file
-                if (MusicFile == null || MusicFile.Length == 0)
-                {
-                    Message = "Please select a valid music file.";
-                    return Page();
-                }
-
-                // Generate unique filename and save file to "wwwroot/music"
-                var fileName = $"{Guid.NewGuid()}{Path.GetExtension(MusicFile.FileName)}";
-                var filePath = Path.Combine("wwwroot", "music", fileName);
-
-                Directory.CreateDirectory(Path.GetDirectoryName(filePath)); // Ensure directory exists
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await MusicFile.CopyToAsync(stream);
-                }
-
-                // Save metadata to database
-                var music = new UserMusic
-                {
-                    UserId = int.Parse(userId),
-                    Title = Title,
-                    Artist = Artist,
-                    FilePath = $"/music/{fileName}"
-                };
-
-                _dbContext.UserMusic.Add(music); // This should now work
-                await _dbContext.SaveChangesAsync();
-
-
-                Message = "Song added successfully!";
-            }
-            catch (Exception ex)
-            {
-                Message = "An error occurred while adding the song.";
-                Console.WriteLine($"Error: {ex.Message}");
+                ErrorMessage = "You must be logged in to add a song.";
+                return Page();
             }
 
-            return Page();
+            if (string.IsNullOrEmpty(Title) || string.IsNullOrEmpty(Artist) || MusicFile == null)
+            {
+                ErrorMessage = "All fields are required.";
+                return Page();
+            }
+
+            // Retrieve the logged-in user's ID from claims
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+            // Save the file to the server
+            var filePath = Path.Combine("wwwroot/music", MusicFile.FileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await MusicFile.CopyToAsync(stream);
+            }
+
+            // Create and save the UserMusic record
+            var userMusic = new UserMusic
+            {
+                Title = Title,
+                Artist = Artist,
+                FilePath = $"/music/{MusicFile.FileName}",
+                UserId = userId,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _dbContext.UserMusic.Add(userMusic);
+            await _dbContext.SaveChangesAsync();
+
+            // Redirect to homepage after successful addition
+            return RedirectToPage("/HomePage");
         }
     }
 }

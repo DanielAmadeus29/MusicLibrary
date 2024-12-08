@@ -3,27 +3,33 @@
 @{
     ViewData["Title"] = "Add Song";
 }
-<link rel="stylesheet" href="~/css/addsong.css" />
-<h1></h1>
-<h2>Add Song</h2>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="/css/addsong.css" />
+</head>
 
-<form method="post" enctype="multipart/form-data">
-    <div>
-        <label for="title">Title</label>
-        <input type="text" id="title" name="Title" required />
-    </div>
-    <div>
-        <label for="artist">Artist</label>
-        <input type="text" id="artist" name="Artist" required />
-    </div>
-    <div>
-        <label for="musicFile">Music File</label>
-        <input type="file" id="musicFile" name="MusicFile" accept="audio/*" required />
-    </div>
-    <button type="submit">Add Song</button>
-</form>
+<div class="add-song-container">
+    <h1>Add Song</h1>
+    <form method="post" enctype="multipart/form-data">
+        <div>
+            <label for="Title">Title</label>
+            <input id="Title" name="Title" type="text" value="@Model.Title" required />
+        </div>
+        <div>
+            <label for="Artist">Artist</label>
+            <input id="Artist" name="Artist" type="text" value="@Model.Artist" required />
+        </div>
+        <div>
+            <label for="MusicFile">Music File</label>
+            <input id="MusicFile" name="MusicFile" type="file" required />
+        </div>
+        <button type="submit">Add Song</button>
+    </form>
 
-@if (!string.IsNullOrEmpty(Model.Message))
-{
-    <p>@Model.Message</p>
-}
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <p style="color: red;">@Model.ErrorMessage</p>
+    }
+</div>
