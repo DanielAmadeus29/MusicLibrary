@@ -17,23 +17,21 @@
         <div class="navbar-container">
             <h1>🎵 Music Library</h1>
             <nav>
+                <a href="/AddSong">Add Song</a>
                 <a href="/Index">Logout</a>
+                <div class="player-container">
+                  
+                </div>
             </nav>
         </div>
     </header>
 
     <main class="main-content">
-        <aside class="sidebar">
-        
-        </aside>
-
         <section class="content">
             <h2>Welcome, <strong>@Model.Username</strong>!</h2>
             <p>Your personal music collection, all in one place.</p>
 
-            <div class="add-song-btn">
-                <button onclick="location.href='/AddSong'">Add Song</button>
-            </div>
+       
 
             <h2>Your Songs</h2>
             <p>Number of Songs: @Model.Songs.Count</p>
@@ -42,16 +40,43 @@
                 @foreach (var song in Model.Songs)
                 {
                     <div class="song-item">
-                        <h3>@song.Title</h3>
-                        <p>by @song.Artist</p>
-                        <audio controls>
-                            <source src="@song.FilePath" type="audio/mpeg">
-                            Your browser does not support the audio element.
-                        </audio>
+                        <div class="song-info">
+                            <h3>@song.Title</h3>
+                            <p>by @song.Artist</p>
+                        </div>
+                        <div class="song-actions">
+                            <button onclick="playSong('@song.FilePath')" class="play-btn">Play</button>
+                            <form method="post" asp-page-handler="Delete" onsubmit="return confirm('Are you sure you want to delete this song?');">
+                                <input type="hidden" name="SongId" value="@song.Id" />
+                                <button type="submit" class="delete-btn">Delete</button>
+                            </form>
+                        </div>
                     </div>
                 }
             </div>
         </section>
     </main>
+    <footer class="footer-nav">
+        <div class="footer-container">
+            <div class="footer-text">
+                <h2>Now Playing</h2>
+            </div>
+            <div class="footer-audio">
+                <audio id="audioPlayer" controls>
+                    <source src="" type="audio/mpeg" />
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Function to play the selected song
+        function playSong(filePath) {
+            const audioPlayer = document.getElementById('audioPlayer');
+            audioPlayer.src = filePath; // Set the file path of the selected song
+            audioPlayer.play(); // Start playing the song
+        }
+    </script>
 </body>
 </html>
