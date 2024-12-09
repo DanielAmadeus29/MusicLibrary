@@ -10,6 +10,7 @@ namespace MusicLibrary.Models
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Playlist> Playlist { get; set; }
         public DbSet<UserMusic> UserMusic { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
