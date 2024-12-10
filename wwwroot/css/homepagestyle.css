@@ -1,4 +1,4 @@
-﻿/* General Reset */
+﻿
 body, html {
     margin: 0;
     padding: 0;
@@ -7,7 +7,7 @@ body, html {
     background-color: #f9f9f9;
 }
 
-/* Header Navbar */
+
 .navbar {
     background-color: #000000;
     color: #ffffff;
@@ -38,10 +38,10 @@ body, html {
         text-decoration: underline;
     }
 
-/* Main Content */
+
 .main-content {
     padding: 20px;
-    margin-top: 60px; /* Adjust based on the navbar height */
+    margin-top: 60px;
 }
 
 .content h2 {
@@ -108,7 +108,7 @@ body, html {
     .delete-btn:hover {
         background-color: #990000;
     }
-/* Footer Navbar */
+
 .footer-nav {
     background-color: #000000;
     color: #ffffff;

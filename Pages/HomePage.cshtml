@@ -35,7 +35,7 @@
                 @if (Model.Playlists.Any())
                 {
                     <div class="playlist-actions">
-                        <!-- Delete playlist form -->
+                       
                         <form method="post" asp-page-handler="DeletePlaylist" style="display:inline; margin-left:10px;">
                             <select asp-for="DeletePlaylistId" required>
                                 @foreach (var playlist in Model.Playlists)
@@ -79,7 +79,7 @@
                                     }
                                     else
                                     {
-                                        // Join all playlist names with a comma
+                                       
                                         var playlistNames = string.Join(", ", playlistsForSong.Select(p => p.Name));
                                         <span>@playlistNames</span>
                                     }
