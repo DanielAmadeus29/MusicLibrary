@@ -31,10 +31,22 @@ namespace MusicLibrary.Pages
                 return Page();
             }
 
-            // Create and save the playlist
+            // Retrieve the UserId of the logged-in user
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+
+            if (userIdClaim == null)
+            {
+                ErrorMessage = "User not logged in.";
+                return Page(); // Handle unauthenticated users
+            }
+
+            var userId = int.Parse(userIdClaim.Value); // Convert UserId to integer
+
+            // Create and save the Playlist
             var playlist = new Playlist
             {
-                Name = PlaylistName
+                Name = PlaylistName,
+                UserId = userId // Associate the playlist with the logged-in user
             };
 
             _dbContext.Playlist.Add(playlist);
@@ -43,5 +55,6 @@ namespace MusicLibrary.Pages
             // Redirect to the homepage after successful creation
             return RedirectToPage("/HomePage");
         }
+
     }
 }
