@@ -15,7 +15,7 @@
 <body>
     <header class="navbar">
         <div class="navbar-container">
-            <h1> <strong>@Model.Username</strong>! Music Library</h1>
+            <h1><strong>@Model.Username</strong>! Music Library</h1>
             <nav>
                 <a href="/CreatePlaylist">Create Playlist</a>
                 <a href="/AddSong">Add Song</a>
@@ -34,20 +34,28 @@
                 <h2>Your Playlists</h2>
                 @if (Model.Playlists.Any())
                 {
-                    <div class="playlist-buttons">
-                        @foreach (var playlist in Model.Playlists)
-                        {
-                            <form method="get" asp-page-handler="FilterByPlaylist" asp-route-playlistId="@playlist.Id" style="display:inline;">
-                                <button type="submit" class="playlist-btn">@playlist.Name</button>
-                            </form>
-                        }
+                    <div class="playlist-actions">
+                        <!-- Delete playlist form -->
+                        <form method="post" asp-page-handler="DeletePlaylist" style="display:inline; margin-left:10px;">
+                            <select asp-for="DeletePlaylistId" required>
+                                @foreach (var playlist in Model.Playlists)
+                                {
+                                    <option value="@playlist.Id">@playlist.Name</option>
+                                }
+                            </select>
+                            <button type="submit" class="delete-btn">Delete Playlist</button>
+                        </form>
                     </div>
+
+
                 }
                 else
                 {
                     <p>You don't have any playlists yet. Create one!</p>
                 }
             </section>
+
+
 
             <div class="search-bar">
                 <input type="text" id="searchInput" placeholder="Search songs/artist..." onkeyup="searchSongs()" />
@@ -60,6 +68,27 @@
                         <div class="song-info">
                             <h3>@song.Title</h3>
                             <p>by @song.Artist</p>
+                            <p>
+                                Playlists:
+                                @{
+                                    var playlistsForSong = Model.Playlists
+                                    .Where(p => p.Songs != null && p.Songs.Any(s => s.Id == song.Id))
+                                    .ToList();
+
+                                    if (!playlistsForSong.Any())
+                                    {
+                                        <span>Not in any playlist</span>
+                                    }
+                                    else
+                                    {
+                                        // Join all playlist names with a comma
+                                        var playlistNames = string.Join(", ", playlistsForSong.Select(p => p.Name));
+                                        <span>@playlistNames</span>
+                                    }
+                                }
+                            </p>
+
+
                         </div>
                         <div class="song-actions">
                             <button onclick="playSong('@song.FilePath', '@song.Title', '@song.Artist')" class="play-btn">Play</button>
