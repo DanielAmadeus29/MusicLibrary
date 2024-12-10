@@ -39,17 +39,17 @@ namespace MusicLibrary.Pages
                 return Page();
             }
 
-            // Retrieve the logged-in user's ID from claims
+            // Collect UserID
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
-            // Save the file to the server
+            // Save File
             var filePath = Path.Combine("wwwroot/music", MusicFile.FileName);
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await MusicFile.CopyToAsync(stream);
             }
 
-            // Create and save the UserMusic record
+            // Create Save Music
             var userMusic = new UserMusic
             {
                 Title = Title,
@@ -62,7 +62,7 @@ namespace MusicLibrary.Pages
             _dbContext.UserMusic.Add(userMusic);
             await _dbContext.SaveChangesAsync();
 
-            // Redirect to homepage after successful addition
+        
             return RedirectToPage("/HomePage");
         }
     }

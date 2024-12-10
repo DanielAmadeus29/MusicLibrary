@@ -6,7 +6,7 @@
         public int PlaylistId { get; set; }
         public int UserMusicId { get; set; }
 
-        // Navigation properties
+        // Navigation
         public Playlist Playlist { get; set; }
         public UserMusic UserMusic { get; set; }
     }

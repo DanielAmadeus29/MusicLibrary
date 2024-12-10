@@ -123,13 +123,13 @@ body, html {
     box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
 }
 .footer-text p {
-    margin: 0; /* Remove any default margin */
-    line-height: 1.2; /* Adjust line spacing to reduce space */
-    font-size: 16px; /* Adjust font size if needed */
+    margin: 0; 
+    line-height: 1.2; 
+    font-size: 16px;
 }
 
 .footer-text h2 {
-    margin-bottom: 5px; /* Add a small gap below the "Now Playing" header */
+    margin-bottom: 5px; 
 }
 
 .footer-text h2 {
@@ -138,10 +138,10 @@ body, html {
 }
 
 .footer-audio audio {
-    width: 900px;
+    width: 1800px;
 }
 
-/* Responsive Design */
+
 @media (max-width: 768px) {
     .song-item {
         width: calc(50% - 10px);
@@ -157,7 +157,7 @@ body, html {
         width: 100%;
     }
 }
-/* Search Bar Styling */
+
 .search-bar {
     margin-bottom: 20px;
 }
