@@ -38,13 +38,21 @@ public class HomePageModel : PageModel
             // Fetch user-specific songs with their associated playlists
             Songs = await _dbContext.UserMusic
                 .Include(s => s.Playlist) // Include playlists to show associations
-                .Where(song => song.UserId == userId)
+                .Where(song => song.UserId == userId) // Filter songs by logged-in user
                 .ToListAsync();
 
             Username = User.Identity.Name;
 
-            // Fetch all playlists
-            Playlists = await _dbContext.Playlist.ToListAsync();
+            // Fetch playlists for the logged-in user
+            Playlists = await _dbContext.Playlist
+                .Where(p => p.UserId == userId) // Filter playlists by logged-in user
+                .ToListAsync();
+        }
+        else
+        {
+            // If the user is not authenticated, clear playlists and songs
+            Songs = new List<UserMusic>();
+            Playlists = new List<Playlist>();
         }
     }
 
