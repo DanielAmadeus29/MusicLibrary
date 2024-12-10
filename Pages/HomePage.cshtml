@@ -147,14 +147,18 @@
             for (let i = 0; i < songItems.length; i++) {
                 const songTitle = songItems[i].querySelector('.song-info h3').textContent.toLowerCase();
                 const songArtist = songItems[i].querySelector('.song-info p').textContent.toLowerCase();
+                const playlistText = songItems[i].querySelector('.song-info p span')
+                    ? songItems[i].querySelector('.song-info p span').textContent.toLowerCase()
+                    : ''; // Handle case when there are no playlists
 
-                if (songTitle.includes(input) || songArtist.includes(input)) {
+                if (songTitle.includes(input) || songArtist.includes(input) || playlistText.includes(input)) {
                     songItems[i].style.display = '';
                 } else {
                     songItems[i].style.display = 'none';
                 }
             }
         }
+
     </script>
 </body>
 </html>
