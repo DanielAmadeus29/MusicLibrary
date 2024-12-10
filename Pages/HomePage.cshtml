@@ -97,13 +97,16 @@
 
                             <form method="post" asp-page-handler="AddToPlaylist" asp-route-songId="@song.Id" style="display:inline;">
                                 <select name="PlaylistId" required>
+                                    <option value="null">No Playlist</option> <!-- Default option for no playlist -->
                                     @foreach (var playlist in Model.Playlists)
                                     {
                                         <option value="@playlist.Id">@playlist.Name</option>
                                     }
                                 </select>
+
                                 <button type="submit" class="add-to-playlist-btn">Add to Playlist</button>
                             </form>
+
                         </div>
                     </div>
                 }

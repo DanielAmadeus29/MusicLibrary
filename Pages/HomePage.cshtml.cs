@@ -23,10 +23,12 @@ public class HomePageModel : PageModel
     public int SongId { get; set; } 
 
     [BindProperty]
-    public int PlaylistId { get; set; } 
+    public int? PlaylistId { get; set; }
+
 
     [BindProperty]
-    public int DeletePlaylistId { get; set; } 
+    public int DeletePlaylistId { get; set; }
+
 
     public async Task OnGetAsync()
     {
@@ -55,32 +57,34 @@ public class HomePageModel : PageModel
             Playlists = new List<Playlist>();
         }
     }
-
     public async Task<IActionResult> OnPostAddToPlaylistAsync()
     {
+        var song = await _dbContext.UserMusic.FirstOrDefaultAsync(s => s.Id == SongId);
 
-        var playlist = await _dbContext.Playlist
-            .Include(p => p.Songs)
-            .FirstOrDefaultAsync(p => p.Id == PlaylistId);
-
-        var song = await _dbContext.UserMusic
-            .Include(s => s.Playlist)
-            .FirstOrDefaultAsync(s => s.Id == SongId);
-
-        if (song == null || playlist == null)
+        if (song == null)
         {
-            ModelState.AddModelError("", "Invalid song or playlist selection.");
+            ModelState.AddModelError("", "Invalid song selection.");
             return Page();
         }
 
-        if (!playlist.Songs.Any(s => s.Id == song.Id))
+        if (PlaylistId == null)
         {
-            playlist.Songs.Add(song);
+    
+            song.PlaylistId = null;
+            song.Playlist = null; 
+            _dbContext.Entry(song).Property(s => s.PlaylistId).IsModified = true; 
+            await _dbContext.SaveChangesAsync();
+        }
+        else
+        {
+            song.PlaylistId = PlaylistId;
             await _dbContext.SaveChangesAsync();
         }
 
         return RedirectToPage("/HomePage");
     }
+
+
 
     public async Task<IActionResult> OnPostDeletePlaylistAsync()
     {
