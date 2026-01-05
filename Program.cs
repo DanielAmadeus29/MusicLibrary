@@ -5,19 +5,19 @@ using MusicLibrary.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add Razor Pages
+
 builder.Services.AddRazorPages();
 
-// Configure DbContext
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MusicLibraryDatabase")));
 
-// Add Cookie Authentication
+
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Login"; // Redirect if not authenticated
-        options.LogoutPath = "/Logout"; // Path for logging out
+        options.LoginPath = "/Login";
+        options.LogoutPath = "/Logout";
         options.AccessDeniedPath = "/AccessDenied";
     });
 
@@ -27,11 +27,11 @@ var app = builder.Build();
 
 app.MapGet("/Logout", async (HttpContext httpContext) =>
 {
-    await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme); // Clear authentication cookies
-    return Results.Redirect("/Login"); // Redirect to login page
+    await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme); 
+    return Results.Redirect("/Login");
 });
 
-// Error page for development
+
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -39,8 +39,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseStaticFiles();
 app.UseRouting();
-app.UseAuthentication(); // Enable cookie-based authentication
-app.UseAuthorization(); // Enable authorization
+app.UseAuthentication(); 
+app.UseAuthorization();
 
 app.MapRazorPages();
 

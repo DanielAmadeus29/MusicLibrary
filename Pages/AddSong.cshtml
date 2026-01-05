@@ -2,34 +2,48 @@
 @model MusicLibrary.Pages.AddSongModel
 @{
     ViewData["Title"] = "Add Song";
+    Layout = null;
 }
+
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="/css/addsong.css" />
 </head>
+<body>
+    <div class="add-song-container">
+        <a href="/HomePage" class="back-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+            Back to Library
+        </a>
 
-<div class="add-song-container">
-    <h1>Add Song</h1>
-    <form method="post" enctype="multipart/form-data">
-        <div>
-            <label for="Title">Title</label>
-            <input id="Title" name="Title" type="text" value="@Model.Title" required />
-        </div>
-        <div>
-            <label for="Artist">Artist</label>
-            <input id="Artist" name="Artist" type="text" value="@Model.Artist" required />
-        </div>
-        <div>
-            <label for="MusicFile">Music File</label>
-            <input id="MusicFile" name="MusicFile" type="file" required />
-        </div>
-        <button type="submit">Add Song</button>
-    </form>
+        <h1>Add Song</h1>
 
-    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-    {
-        <p style="color: red;">@Model.ErrorMessage</p>
-    }
-</div>
+        <form method="post" enctype="multipart/form-data">
+            <div>
+                <label for="Title">Title</label>
+                <input id="Title" name="Title" type="text" value="@Model.Title" required />
+            </div>
+            <div>
+                <label for="Artist">Artist</label>
+                <input id="Artist" name="Artist" type="text" value="@Model.Artist" required />
+            </div>
+            <div>
+                <label for="MusicFile">Music File</label>
+                <input id="MusicFile" name="MusicFile" type="file" accept="audio/*" required />
+            </div>
+            <button type="submit">Add Song</button>
+        </form>
+
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <p class="error-message">@Model.ErrorMessage</p>
+        }
+    </div>
+</body>
+</html>

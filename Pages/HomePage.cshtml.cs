@@ -20,97 +20,140 @@ public class HomePageModel : PageModel
     public string Username { get; set; } = "Guest";
 
     [BindProperty]
-    public int SongId { get; set; } 
+    public int SongId { get; set; }
 
     [BindProperty]
     public int? PlaylistId { get; set; }
 
-
     [BindProperty]
     public int DeletePlaylistId { get; set; }
 
+    [BindProperty]
+    public string PlaylistName { get; set; } = string.Empty;
 
     public async Task OnGetAsync()
     {
-        // Check UserID
-        if (User.Identity.IsAuthenticated)
+        if (User.Identity != null && User.Identity.IsAuthenticated)
         {
-            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            if (userIdClaim != null)
+            {
+                var userId = int.Parse(userIdClaim.Value);
 
-            // Songs Based on User
-            Songs = await _dbContext.UserMusic
-                .Include(s => s.Playlist) 
-                .Where(song => song.UserId == userId) 
-                .ToListAsync();
+                Songs = await _dbContext.UserMusic
+                    .Include(s => s.Playlist)
+                    .Where(song => song.UserId == userId)
+                    .ToListAsync();
 
-            Username = User.Identity.Name;
+                Username = User.Identity.Name ?? "Guest";
 
-            // Song based on Playlist
-            Playlists = await _dbContext.Playlist
-                .Where(p => p.UserId == userId) 
-                .ToListAsync();
+                Playlists = await _dbContext.Playlist
+                    .Include(p => p.Songs)
+                    .Where(p => p.UserId == userId)
+                    .ToListAsync();
+            }
         }
         else
         {
-         
             Songs = new List<UserMusic>();
             Playlists = new List<Playlist>();
         }
     }
-    public async Task<IActionResult> OnPostAddToPlaylistAsync()
-    {
-        var song = await _dbContext.UserMusic.FirstOrDefaultAsync(s => s.Id == SongId);
 
-        if (song == null)
+    public async Task<IActionResult> OnPostCreatePlaylistAsync()
+    {
+        if (string.IsNullOrEmpty(PlaylistName))
         {
-            ModelState.AddModelError("", "Invalid song selection.");
+            ModelState.AddModelError("", "Playlist name is required.");
+            await OnGetAsync();
             return Page();
         }
 
-        if (PlaylistId == null)
+        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
         {
-    
-            song.PlaylistId = null;
-            song.Playlist = null; 
-            _dbContext.Entry(song).Property(s => s.PlaylistId).IsModified = true; 
+            return RedirectToPage("/Index");
+        }
+
+        var userId = int.Parse(userIdClaim.Value);
+
+        var playlist = new Playlist
+        {
+            Name = PlaylistName,
+            UserId = userId
+        };
+
+        _dbContext.Playlist.Add(playlist);
+
+        try
+        {
             await _dbContext.SaveChangesAsync();
         }
-        else
+        catch (Exception ex)
         {
-            song.PlaylistId = PlaylistId;
-            await _dbContext.SaveChangesAsync();
+            ModelState.AddModelError("", $"Error saving playlist: {ex.Message}");
+            await OnGetAsync();
+            return Page();
         }
 
         return RedirectToPage("/HomePage");
     }
 
+    public async Task<IActionResult> OnPostAddToPlaylistAsync()
+    {
+        var song = await _dbContext.UserMusic.FirstOrDefaultAsync(s => s.Id == SongId);
+        if (song == null)
+        {
+            ModelState.AddModelError("", "Invalid song selection.");
+            await OnGetAsync();
+            return Page();
+        }
 
+        // If PlaylistId is null, 0, or empty, remove from playlist
+        if (!PlaylistId.HasValue || PlaylistId.Value == 0)
+        {
+            song.PlaylistId = null;
+            song.Playlist = null;
+        }
+        else
+        {
+            song.PlaylistId = PlaylistId.Value;
+        }
+
+        await _dbContext.SaveChangesAsync();
+        return RedirectToPage("/HomePage");
+    }
 
     public async Task<IActionResult> OnPostDeletePlaylistAsync()
     {
-  
         var playlist = await _dbContext.Playlist
-            .Include(p => p.Songs) 
+            .Include(p => p.Songs)
             .FirstOrDefaultAsync(p => p.Id == DeletePlaylistId);
 
         if (playlist != null)
         {
-   
+            // Remove playlist reference from all songs
+            if (playlist.Songs != null)
+            {
+                foreach (var song in playlist.Songs)
+                {
+                    song.PlaylistId = null;
+                }
+            }
+
             _dbContext.Playlist.Remove(playlist);
             await _dbContext.SaveChangesAsync();
         }
 
-    
         return RedirectToPage("/HomePage");
     }
 
     public async Task<IActionResult> OnPostDeleteAsync()
     {
-  
         var song = await _dbContext.UserMusic.FindAsync(SongId);
         if (song != null)
         {
-            _dbContext.UserMusic.Remove(song); 
+            _dbContext.UserMusic.Remove(song);
             await _dbContext.SaveChangesAsync();
         }
 

@@ -30,12 +30,12 @@ namespace MusicLibrary.Pages
 
         public void OnGet()
         {
-            // Display the form
+          
         }
 
         public IActionResult OnPost()
         {
-            // Validate form inputs
+            
             if (string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Password) || string.IsNullOrEmpty(ConfirmPassword))
             {
                 ErrorMessage = "All fields are required.";
@@ -48,7 +48,7 @@ namespace MusicLibrary.Pages
                 return Page();
             }
 
-            // Check if username already exists
+            
             var existingUser = _dbContext.Users.FirstOrDefault(u => u.Username == Username);
             if (existingUser != null)
             {
@@ -56,11 +56,11 @@ namespace MusicLibrary.Pages
                 return Page();
             }
 
-            // Insert new user into database
+            
             var newUser = new User
             {
                 Username = Username,
-                Password = Password // Store as plain text (not secure; use hashing in production)
+                Password = Password
             };
 
             _dbContext.Users.Add(newUser);

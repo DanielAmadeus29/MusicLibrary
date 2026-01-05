@@ -1,7 +1,7 @@
 ﻿@page
 @model HomePageModel
 @{
-    ViewData["Title"] = "Home - Music Library";
+    ViewData["Title"] = "Music Library";
 }
 
 <!DOCTYPE html>
@@ -9,159 +9,465 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewData["Title"]</title>
-    <link rel="stylesheet" href="/css/homepagestyle.css" />
+    <meta name="description" content="Modern music library and playlist manager">
+    <title>@ViewData["Title"] - @Model.Username</title>
+    <link rel="stylesheet" href="/css/homepage.css" />
 </head>
 <body>
-    <header class="navbar">
-        <div class="navbar-container">
-            <h1><strong>@Model.Username</strong>! Music Library</h1>
-            <nav>
-                <a href="/CreatePlaylist">Create Playlist</a>
-                <a href="/AddSong">Add Song</a>
-                <a href="/Index">Logout</a>
-                <div class="player-container"></div>
-            </nav>
+    <!-- TOP NAVIGATION -->
+    <nav class="top-nav">
+        <div class="nav-content">
+            <div class="nav-left">
+                <div class="logo">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 18V5l12-2v13M9 13l12-2" />
+                        <circle cx="6" cy="18" r="3" />
+                        <circle cx="18" cy="16" r="3" />
+                    </svg>
+                    <span class="logo-text">Music Library</span>
+                </div>
+            </div>
+            <div class="nav-right">
+                <span class="user-badge">@Model.Username</span>
+                <a href="/Index" class="btn-logout">Logout</a>
+            </div>
         </div>
-    </header>
+    </nav>
 
-    <main class="main-content">
-        <section class="content">
-            <h2>Welcome, <strong>@Model.Username</strong>!</h2>
-            <p>Number of Songs: @Model.Songs.Count</p>
+    <!-- MAIN CONTAINER -->
+    <div class="container">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <div class="stats-overview">
+                    <div class="stat">
+                        <div class="stat-value">@Model.Songs.Count</div>
+                        <div class="stat-label">Songs</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">@Model.Playlists.Count</div>
+                        <div class="stat-label">Playlists</div>
+                    </div>
+                </div>
+            </div>
 
-            <section class="playlists">
-                <h2>Your Playlists</h2>
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Library</h3>
+
+                <!-- All Songs Option -->
+                <div class="playlist-list">
+                    <div class="playlist-item active" data-filter="all" onclick="filterPlaylist('all', this)">
+                        <div class="playlist-item-info">
+                            <svg class="playlist-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 18V5l12-2v13M9 13l12-2" />
+                                <circle cx="6" cy="18" r="3" />
+                                <circle cx="18" cy="16" r="3" />
+                            </svg>
+                            <span class="playlist-name">All Songs</span>
+                            <span class="playlist-count">@Model.Songs.Count</span>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="sidebar-title" style="margin-top: 1.5rem;">Playlists</h3>
                 @if (Model.Playlists.Any())
                 {
-                    <div class="playlist-actions">
-                       
-                        <form method="post" asp-page-handler="DeletePlaylist" style="display:inline; margin-left:10px;">
-                            <select asp-for="DeletePlaylistId" required>
-                                @foreach (var playlist in Model.Playlists)
-                                {
-                                    <option value="@playlist.Id">@playlist.Name</option>
-                                }
-                            </select>
-                            <button type="submit" class="delete-btn">Delete Playlist</button>
-                        </form>
+                    <div class="playlist-list">
+                        @foreach (var playlist in Model.Playlists)
+                        {
+                            <div class="playlist-item" data-filter="@playlist.Id" onclick="filterPlaylist(@playlist.Id, this)">
+                                <div class="playlist-item-info">
+                                    <svg class="playlist-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M3 12h18M3 6h18M3 18h18" />
+                                    </svg>
+                                    <span class="playlist-name">@playlist.Name</span>
+                                    <span class="playlist-count">@(playlist.Songs?.Count ?? 0)</span>
+                                </div>
+                                <form method="post" asp-page-handler="DeletePlaylist" class="playlist-delete" onclick="event.stopPropagation()">
+                                    <input type="hidden" name="DeletePlaylistId" value="@playlist.Id" />
+                                    <button type="submit" class="btn-delete-playlist" onclick="return confirm('Delete @playlist.Name?')" title="Delete">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                                        </svg>
+                                    </button>
+                                </form>
+                            </div>
+                        }
                     </div>
                 }
                 else
                 {
-                    <p>You don't have any playlists yet. Create one!</p>
+                    <p class="empty-message">No playlists yet</p>
                 }
-            </section>
 
+                <button onclick="showCreatePlaylist()" class="btn-create-playlist">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12h14" />
+                    </svg>
+                    Create Playlist
+                </button>
+            </div>
+        </aside>
 
-
-            <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="Search songs/artist..." onkeyup="searchSongs()" />
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <!-- ACTION BAR -->
+            <div class="action-bar">
+                <div class="action-bar-left">
+                    <h1 class="page-title" id="pageTitle">All Songs</h1>
+                </div>
+                <div class="action-bar-right">
+                    <a href="/AddSong" class="btn btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12h14" />
+                        </svg>
+                        Add Song
+                    </a>
+                </div>
             </div>
 
-            <div class="songs-list" id="songsList">
-                @foreach (var song in Model.Songs)
-                {
-                    <div class="song-item">
-                        <div class="song-info">
-                            <h3>@song.Title</h3>
-                            <p>by @song.Artist</p>
-                            <p>
-                                Playlists:
+            <!-- CREATE PLAYLIST MODAL -->
+            <div id="createPlaylistModal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title">Create New Playlist</h2>
+                        <button onclick="hideCreatePlaylist()" class="modal-close">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M18 6L6 18M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <form method="post" asp-page-handler="CreatePlaylist" class="modal-form">
+                        <div class="form-field">
+                            <label for="playlistName" class="form-label">Playlist Name</label>
+                            <input type="text"
+                                   id="playlistName"
+                                   name="PlaylistName"
+                                   class="form-control"
+                                   placeholder="My Awesome Playlist"
+                                   required
+                                   autofocus />
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" onclick="hideCreatePlaylist()" class="btn btn-secondary">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Create</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- SEARCH BAR -->
+            <div class="search-section">
+                <div class="search-box">
+                    <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8" />
+                        <path d="M21 21l-4.35-4.35" />
+                    </svg>
+                    <input type="text"
+                           id="searchInput"
+                           class="search-input"
+                           placeholder="Search songs, artists, or playlists..."
+                           onkeyup="searchSongs()" />
+                </div>
+            </div>
+
+            <!-- SONGS GRID -->
+            @if (Model.Songs.Any())
+            {
+                <div class="songs-grid" id="songsGrid">
+                    @foreach (var song in Model.Songs)
+                    {
+                        var songPlaylists = Model.Playlists
+                        .Where(p => p.Songs != null && p.Songs.Any(s => s.Id == song.Id))
+                        .Select(p => p.Id.ToString())
+                        .ToList();
+                        var playlistIds = string.Join(",", songPlaylists);
+
+                        <div class="song-card" data-song-id="@song.Id" data-playlists="@playlistIds">
+                            <div class="song-card-header">
+                                <button class="play-button"
+                                        onclick="playSong('@song.FilePath', '@song.Title', '@song.Artist', this)"
+                                        aria-label="Play @song.Title">
+                                    <svg class="play-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M8 5v14l11-7z" />
+                                    </svg>
+                                    <svg class="pause-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
+                                        <path d="M6 4h4v16H6zM14 4h4v16h-4z" />
+                                    </svg>
+                                </button>
+                                <div class="song-info">
+                                    <h3 class="song-title">@song.Title</h3>
+                                    <p class="song-artist">@song.Artist</p>
+                                </div>
+                            </div>
+
+                            <div class="song-meta">
                                 @{
                                     var playlistsForSong = Model.Playlists
                                     .Where(p => p.Songs != null && p.Songs.Any(s => s.Id == song.Id))
                                     .ToList();
-
-                                    if (!playlistsForSong.Any())
+                                }
+                                <span class="song-playlists">
+                                    @if (playlistsForSong.Any())
                                     {
-                                        <span>Not in any playlist</span>
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M3 12h18M3 6h18M3 18h18" />
+                                        </svg>
+                                        <span>@string.Join(", ", playlistsForSong.Select(p => p.Name))</span>
                                     }
                                     else
                                     {
-                                       
-                                        var playlistNames = string.Join(", ", playlistsForSong.Select(p => p.Name));
-                                        <span>@playlistNames</span>
+                                        <span class="no-playlist">No playlist</span>
                                     }
-                                }
-                            </p>
+                                </span>
+                            </div>
 
+                            <div class="song-actions">
+                                <form method="post" asp-page-handler="AddToPlaylist" class="inline-form">
+                                    <input type="hidden" name="SongId" value="@song.Id" />
+                                    <select name="PlaylistId" class="select-minimal" onchange="this.form.submit()">
+                                        <option value="">Add to playlist...</option>
+                                        <option value="0">No playlist</option>
+                                        @foreach (var playlist in Model.Playlists)
+                                        {
+                                            <option value="@playlist.Id">@playlist.Name</option>
+                                        }
+                                    </select>
+                                </form>
 
+                                <form method="post" asp-page-handler="Delete" class="inline-form">
+                                    <input type="hidden" name="SongId" value="@song.Id" />
+                                    <button type="submit"
+                                            class="btn-icon btn-icon-danger"
+                                            onclick="return confirm('Delete @song.Title?')"
+                                            title="Delete song">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                                        </svg>
+                                    </button>
+                                </form>
+                            </div>
                         </div>
-                        <div class="song-actions">
-                            <button onclick="playSong('@song.FilePath', '@song.Title', '@song.Artist')" class="play-btn">Play</button>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="empty-state">
+                    <svg class="empty-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M9 18V5l12-2v13M9 13l12-2" />
+                        <circle cx="6" cy="18" r="3" />
+                        <circle cx="18" cy="16" r="3" />
+                    </svg>
+                    <h3 class="empty-title">No songs yet</h3>
+                    <p class="empty-text">Start building your library by adding your first song</p>
+                    <a href="/AddSong" class="btn btn-primary">Add Your First Song</a>
+                </div>
+            }
+        </main>
+    </div>
 
-                            <form method="post" asp-page-handler="Delete" asp-route-songId="@song.Id" style="display:inline;">
-                                <button type="submit" class="delete-btn">Delete</button>
-                            </form>
-
-                            <form method="post" asp-page-handler="AddToPlaylist" asp-route-songId="@song.Id" style="display:inline;">
-                                <select name="PlaylistId" required>
-                                    <option value="null">No Playlist</option> <!-- Default option for no playlist -->
-                                    @foreach (var playlist in Model.Playlists)
-                                    {
-                                        <option value="@playlist.Id">@playlist.Name</option>
-                                    }
-                                </select>
-
-                                <button type="submit" class="add-to-playlist-btn">Add to Playlist</button>
-                            </form>
-
-                        </div>
-                    </div>
-                }
+    <!-- MUSIC PLAYER -->
+    <div class="music-player">
+        <div class="player-content">
+            <div class="player-info">
+                <div class="player-artwork">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 18V5l12-2v13M9 13l12-2" />
+                        <circle cx="6" cy="18" r="3" />
+                        <circle cx="18" cy="16" r="3" />
+                    </svg>
+                </div>
+                <div class="player-track-info">
+                    <div id="currentSongTitle" class="player-track-title">No song playing</div>
+                    <div id="currentSongArtist" class="player-track-artist"></div>
+                </div>
             </div>
-        </section>
-    </main>
-
-    <footer class="footer-nav">
-        <div class="footer-container">
-            <div class="footer-text">
-                <h2>Now Playing</h2>
-                <p><strong id="currentSongTitle">No song selected</strong></p>
-                <p><strong id="currentSongArtist"></strong></p>
-            </div>
-
-            <div class="footer-audio">
+            <div class="player-controls">
                 <audio id="audioPlayer" controls>
                     <source src="" type="audio/mpeg" />
+                    Your browser does not support the audio element.
                 </audio>
             </div>
         </div>
-    </footer>
+    </div>
 
+    <!-- JAVASCRIPT -->
     <script>
-        function playSong(filePath, title, artist) {
+        let currentPlayingButton = null;
+        let currentFilter = 'all';
+
+        // Modal functions
+        function showCreatePlaylist() {
+            document.getElementById('createPlaylistModal').style.display = 'flex';
+            document.getElementById('playlistName').focus();
+        }
+
+        function hideCreatePlaylist() {
+            document.getElementById('createPlaylistModal').style.display = 'none';
+            document.getElementById('playlistName').value = '';
+        }
+
+        // Close modal on escape key
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                hideCreatePlaylist();
+            }
+        });
+
+        // Close modal on background click
+        document.getElementById('createPlaylistModal')?.addEventListener('click', function (e) {
+            if (e.target === this) {
+                hideCreatePlaylist();
+            }
+        });
+
+        // Filter playlist function
+        // Filter playlist function - IMPROVED VERSION
+        function filterPlaylist(playlistId, element) {
+            currentFilter = playlistId;
+
+            // Update active state in sidebar
+            document.querySelectorAll('.playlist-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            element.classList.add('active');
+
+            // Update page title
+            const playlistName = element.querySelector('.playlist-name').textContent;
+            document.getElementById('pageTitle').textContent = playlistName;
+
+            // Filter songs
+            const songCards = document.querySelectorAll('.song-card');
+            const songsGrid = document.getElementById('songsGrid');
+
+            if (playlistId === 'all') {
+                // Show all songs
+                songCards.forEach(card => {
+                    card.style.display = '';
+                });
+            } else {
+                // Show only songs in selected playlist
+                songCards.forEach(card => {
+                    const songPlaylists = card.getAttribute('data-playlists').split(',');
+                    if (songPlaylists.includes(playlistId.toString())) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+
+            // Clear search when filtering
+            document.getElementById('searchInput').value = '';
+        }
+
+        // Play song function
+        function playSong(filePath, title, artist, button) {
             const audioPlayer = document.getElementById('audioPlayer');
             const currentSongTitle = document.getElementById('currentSongTitle');
             const currentSongArtist = document.getElementById('currentSongArtist');
 
+            // If clicking the same song that's playing, pause it
+            if (currentPlayingButton === button && !audioPlayer.paused) {
+                audioPlayer.pause();
+                updatePlayButton(button, false);
+                return;
+            }
+
+            // Reset previous button
+            if (currentPlayingButton && currentPlayingButton !== button) {
+                updatePlayButton(currentPlayingButton, false);
+            }
+
+            // Play new song
             audioPlayer.src = filePath;
             currentSongTitle.textContent = title;
-            currentSongArtist.textContent = artist ? `by ${artist}` : '';
+            currentSongArtist.textContent = artist || '';
             audioPlayer.play();
+
+            currentPlayingButton = button;
+            updatePlayButton(button, true);
+
+            // Update card state
+            document.querySelectorAll('.song-card').forEach(card => {
+                card.classList.remove('playing');
+            });
+            button.closest('.song-card').classList.add('playing');
         }
 
-        function searchSongs() {
-            const input = document.getElementById('searchInput').value.toLowerCase();
-            const songsList = document.getElementById('songsList');
-            const songItems = songsList.getElementsByClassName('song-item');
+        function updatePlayButton(button, isPlaying) {
+            const playIcon = button.querySelector('.play-icon');
+            const pauseIcon = button.querySelector('.pause-icon');
 
-            for (let i = 0; i < songItems.length; i++) {
-                const songTitle = songItems[i].querySelector('.song-info h3').textContent.toLowerCase();
-                const songArtist = songItems[i].querySelector('.song-info p').textContent.toLowerCase();
-                const playlistText = songItems[i].querySelector('.song-info p span')
-                    ? songItems[i].querySelector('.song-info p span').textContent.toLowerCase()
-                    : '';
-
-                if (songTitle.includes(input) || songArtist.includes(input) || playlistText.includes(input)) {
-                    songItems[i].style.display = '';
-                } else {
-                    songItems[i].style.display = 'none';
-                }
+            if (isPlaying) {
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'block';
+            } else {
+                playIcon.style.display = 'block';
+                pauseIcon.style.display = 'none';
             }
         }
 
+        // Audio player event listeners
+        const audioPlayer = document.getElementById('audioPlayer');
+
+        audioPlayer.addEventListener('pause', function () {
+            if (currentPlayingButton) {
+                updatePlayButton(currentPlayingButton, false);
+            }
+        });
+
+        audioPlayer.addEventListener('play', function () {
+            if (currentPlayingButton) {
+                updatePlayButton(currentPlayingButton, true);
+            }
+        });
+
+        audioPlayer.addEventListener('ended', function () {
+            if (currentPlayingButton) {
+                updatePlayButton(currentPlayingButton, false);
+                currentPlayingButton.closest('.song-card').classList.remove('playing');
+            }
+        });
+
+        // Search songs function
+        function searchSongs() {
+            const input = document.getElementById('searchInput').value.toLowerCase().trim();
+            const songsGrid = document.getElementById('songsGrid');
+            const songCards = songsGrid?.getElementsByClassName('song-card');
+
+            if (!songCards) return;
+
+            for (let i = 0; i < songCards.length; i++) {
+                // Skip if card is already hidden by playlist filter
+                const songPlaylists = songCards[i].getAttribute('data-playlists').split(',');
+                const matchesFilter = currentFilter === 'all' || songPlaylists.includes(currentFilter.toString());
+
+                if (!matchesFilter) {
+                    continue;
+                }
+
+                const songTitle = songCards[i].querySelector('.song-title')?.textContent.toLowerCase() || '';
+                const songArtist = songCards[i].querySelector('.song-artist')?.textContent.toLowerCase() || '';
+                const playlistText = songCards[i].querySelector('.song-playlists')?.textContent.toLowerCase() || '';
+
+                const matches = songTitle.includes(input) ||
+                    songArtist.includes(input) ||
+                    playlistText.includes(input);
+
+                songCards[i].style.display = matches ? '' : 'none';
+            }
+        }
+
+        // Clear search on escape
+        document.getElementById('searchInput')?.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                this.value = '';
+                searchSongs();
+                this.blur();
+            }
+        });
     </script>
 </body>
 </html>
