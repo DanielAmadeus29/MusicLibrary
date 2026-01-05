@@ -1,13 +1,7 @@
-﻿/* ================================================
-   MODERN MUSIC LIBRARY - COMPLETE REDESIGN
-   Built from scratch with contemporary design
-   ================================================ */
+﻿
 
-/* ================================================
-   DESIGN TOKENS
-   ================================================ */
 :root {
-    /* Colors */
+
     --color-primary: #0f172a;
     --color-primary-hover: #1e293b;
     --color-accent: #3b82f6;
@@ -22,7 +16,7 @@
     --color-text-tertiary: #94a3b8;
     --color-border: #e2e8f0;
     --color-border-hover: #cbd5e1;
-    /* Spacing */
+
     --space-1: 0.25rem;
     --space-2: 0.5rem;
     --space-3: 0.75rem;
@@ -32,29 +26,27 @@
     --space-8: 2rem;
     --space-10: 2.5rem;
     --space-12: 3rem;
-    /* Typography */
+
     --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
     --font-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
-    /* Radius */
+
     --radius-sm: 0.375rem;
     --radius-md: 0.5rem;
     --radius-lg: 0.75rem;
     --radius-xl: 1rem;
     --radius-full: 9999px;
-    /* Shadows */
+
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-    /* Transitions */
+  
     --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
     --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
     --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ================================================
-   RESET & BASE
-   ================================================ */
+
 * {
     margin: 0;
     padding: 0;
@@ -76,9 +68,7 @@ body {
     padding-bottom: 90px;
 }
 
-/* ================================================
-   TOP NAVIGATION
-   ================================================ */
+/* TOP NAVIGATION */
 .top-nav {
     background: var(--color-bg-primary);
     border-bottom: 1px solid var(--color-border);
@@ -150,9 +140,7 @@ body {
         color: var(--color-text-primary);
     }
 
-/* ================================================
-   LAYOUT
-   ================================================ */
+/* LAYOUT */
 .container {
     max-width: 1400px;
     margin: 0 auto;
@@ -162,9 +150,7 @@ body {
     gap: var(--space-6);
 }
 
-/* ================================================
-   SIDEBAR
-   ================================================ */
+/* SIDEBAR */
 .sidebar {
     display: flex;
     flex-direction: column;
@@ -333,18 +319,18 @@ body {
     display: flex;
     flex-direction: column;
     gap: var(--space-6);
-    min-height: calc(100vh - 200px); /* Subtract nav and player height */
+    min-height: calc(100vh - 200px); 
 }
 
-/* Keep songs grid area consistent */
+
 .songs-grid {
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
-    min-height: 400px; /* Minimum height to prevent jumping */
+    min-height: 400px;
 }
 
-/* Add smooth transition for filtered songs */
+
 .song-card {
     background: var(--color-bg-primary);
     border: 1px solid var(--color-border);
@@ -359,13 +345,11 @@ body {
     transform: scale(1);
 }
 
-    /* Instead of display: none, use these for smoother transitions */
+   
     .song-card[style*="display: none"] {
         display: none !important;
     }
-/* ================================================
-   EMPTY STATE FOR FILTERED PLAYLISTS
-   ================================================ */
+
 .songs-grid:empty::after {
     content: 'No songs in this playlist';
     display: flex;
@@ -376,7 +360,7 @@ body {
     font-size: 0.9375rem;
 }
 
-/* Maintain consistent container size */
+
 .container {
     max-width: 1400px;
     margin: 0 auto;
@@ -385,20 +369,18 @@ body {
     grid-template-columns: 280px 1fr;
     gap: var(--space-6);
     min-height: calc(100vh - 150px);
-    align-items: start; /* Changed from default */
+    align-items: start;
 }
 
-/* Fix sidebar to prevent it from resizing */
+
 .sidebar {
     display: flex;
     flex-direction: column;
     gap: var(--space-6);
     position: sticky;
-    top: calc(var(--space-6) + 70px); /* Account for nav height */
+    top: calc(var(--space-6) + 70px);
 }
-/* ================================================
-   BUTTONS
-   ================================================ */
+/* BUTTONS */
 .btn {
     padding: var(--space-3) var(--space-5);
     border: none;
@@ -461,9 +443,7 @@ body {
     color: white;
 }
 
-/* ================================================
-   MODAL
-   ================================================ */
+
 .modal {
     position: fixed;
     inset: 0;
@@ -587,9 +567,7 @@ body {
     gap: var(--space-3);
 }
 
-/* ================================================
-   SEARCH
-   ================================================ */
+
 .search-section {
     background: var(--color-bg-primary);
     border: 1px solid var(--color-border);
@@ -634,9 +612,6 @@ body {
         box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     }
 
-/* ================================================
-   SONGS GRID - FULL WIDTH RECTANGLE LAYOUT
-   ================================================ */
 .songs-grid {
     display: flex;
     flex-direction: column;
@@ -789,9 +764,7 @@ body {
         border-color: var(--color-accent);
     }
 
-/* ================================================
-   RESPONSIVE - SONGS GRID
-   ================================================ */
+
 @media (max-width: 1024px) {
     .song-card {
         flex-wrap: wrap;
@@ -869,9 +842,7 @@ body {
     }
 }
 
-/* ================================================
-   EMPTY STATE
-   ================================================ */
+
 .empty-state {
     background: var(--color-bg-primary);
     border: 1px solid var(--color-border);
@@ -899,9 +870,7 @@ body {
     margin-bottom: var(--space-6);
 }
 
-/* ================================================
-   MUSIC PLAYER
-   ================================================ */
+/* MUSIC PLAYER */
 .music-player {
     position: fixed;
     bottom: 0;
@@ -976,9 +945,7 @@ body {
     height: 40px;
 }
 
-/* ================================================
-   RESPONSIVE
-   ================================================ */
+
 @media (max-width: 1024px) {
     .container {
         grid-template-columns: 1fr;
@@ -1048,9 +1015,7 @@ body {
     }
 }
 
-/* ================================================
-   SCROLLBAR
-   ================================================ */
+
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -1069,9 +1034,7 @@ body {
         background: var(--color-text-tertiary);
     }
 
-/* ================================================
-   ACCESSIBILITY
-   ================================================ */
+
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,

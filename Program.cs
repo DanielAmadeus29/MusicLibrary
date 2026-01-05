@@ -1,12 +1,22 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using MusicLibrary.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
+// Add services to the container.
 builder.Services.AddRazorPages();
+
+// INCREASE FILE UPLOAD SIZE LIMITS
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 104857600; // 100 MB
+    options.ValueLengthLimit = 104857600;
+    options.MultipartHeadersLengthLimit = 104857600;
+});
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

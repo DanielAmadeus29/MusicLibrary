@@ -21,12 +21,18 @@ namespace MusicLibrary.Pages
         public string Artist { get; set; } = string.Empty;
 
         [BindProperty]
-        public IFormFile MusicFile { get; set; }
+        public IFormFile? MusicFile { get; set; }
 
         public string ErrorMessage { get; set; } = string.Empty;
 
+        public void OnGet()
+        {
+
+        }
+
         public async Task<IActionResult> OnPostAsync()
         {
+
             if (!User.Identity.IsAuthenticated)
             {
                 ErrorMessage = "You must be logged in to add a song.";
@@ -39,31 +45,71 @@ namespace MusicLibrary.Pages
                 return Page();
             }
 
-            // Collect UserID
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
-            // Save File
-            var filePath = Path.Combine("wwwroot/music", MusicFile.FileName);
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            if (MusicFile.Length > 50 * 1024 * 1024)
             {
-                await MusicFile.CopyToAsync(stream);
+                ErrorMessage = "File size must be less than 50MB.";
+                return Page();
             }
 
-            // Create Save Music
-            var userMusic = new UserMusic
+
+            var allowedExtensions = new[] { ".mp3", ".wav", ".flac", ".ogg", ".aac", ".m4a", ".wma" };
+            var fileExtension = Path.GetExtension(MusicFile.FileName).ToLowerInvariant();
+
+            if (!allowedExtensions.Contains(fileExtension))
             {
-                Title = Title,
-                Artist = Artist,
-                FilePath = $"/music/{MusicFile.FileName}",
-                UserId = userId,
-                CreatedAt = DateTime.UtcNow
-            };
+                ErrorMessage = "Only audio files (MP3, WAV, FLAC, OGG, AAC, M4A) are allowed.";
+                return Page();
+            }
 
-            _dbContext.UserMusic.Add(userMusic);
-            await _dbContext.SaveChangesAsync();
+            try
+            {
+              
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                if (userIdClaim == null)
+                {
+                    ErrorMessage = "User authentication error.";
+                    return Page();
+                }
+                var userId = int.Parse(userIdClaim.Value);
 
-        
-            return RedirectToPage("/HomePage");
+                var musicFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "music");
+                if (!Directory.Exists(musicFolder))
+                {
+                    Directory.CreateDirectory(musicFolder);
+                }
+
+          
+                var uniqueFileName = $"{Guid.NewGuid()}{fileExtension}";
+                var filePath = Path.Combine(musicFolder, uniqueFileName);
+
+     
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await MusicFile.CopyToAsync(stream);
+                }
+
+      
+                var userMusic = new UserMusic
+                {
+                    Title = Title,
+                    Artist = Artist,
+                    FilePath = $"/music/{uniqueFileName}",
+                    UserId = userId,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                _dbContext.UserMusic.Add(userMusic);
+                await _dbContext.SaveChangesAsync();
+
+                return RedirectToPage("/HomePage");
+            }
+            catch (Exception ex)
+            {
+     
+                ErrorMessage = $"An error occurred while uploading the song: {ex.Message}";
+                return Page();
+            }
         }
     }
 }

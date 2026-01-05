@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="/css/homepage.css" />
 </head>
 <body>
-    <!-- TOP NAVIGATION -->
+
     <nav class="top-nav">
         <div class="nav-content">
             <div class="nav-left">
@@ -34,9 +34,9 @@
         </div>
     </nav>
 
-    <!-- MAIN CONTAINER -->
+
     <div class="container">
-        <!-- SIDEBAR -->
+
         <aside class="sidebar">
             <div class="sidebar-section">
                 <div class="stats-overview">
@@ -54,7 +54,7 @@
             <div class="sidebar-section">
                 <h3 class="sidebar-title">Library</h3>
 
-                <!-- All Songs Option -->
+   
                 <div class="playlist-list">
                     <div class="playlist-item active" data-filter="all" onclick="filterPlaylist('all', this)">
                         <div class="playlist-item-info">
@@ -109,9 +109,9 @@
             </div>
         </aside>
 
-        <!-- MAIN CONTENT -->
+
         <main class="main-content">
-            <!-- ACTION BAR -->
+
             <div class="action-bar">
                 <div class="action-bar-left">
                     <h1 class="page-title" id="pageTitle">All Songs</h1>
@@ -126,7 +126,6 @@
                 </div>
             </div>
 
-            <!-- CREATE PLAYLIST MODAL -->
             <div id="createPlaylistModal" class="modal" style="display: none;">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -156,7 +155,6 @@
                 </div>
             </div>
 
-            <!-- SEARCH BAR -->
             <div class="search-section">
                 <div class="search-box">
                     <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -171,7 +169,6 @@
                 </div>
             </div>
 
-            <!-- SONGS GRID -->
             @if (Model.Songs.Any())
             {
                 <div class="songs-grid" id="songsGrid">
@@ -267,7 +264,7 @@
         </main>
     </div>
 
-    <!-- MUSIC PLAYER -->
+
     <div class="music-player">
         <div class="player-content">
             <div class="player-info">
@@ -292,12 +289,11 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT -->
     <script>
         let currentPlayingButton = null;
         let currentFilter = 'all';
 
-        // Modal functions
+
         function showCreatePlaylist() {
             document.getElementById('createPlaylistModal').style.display = 'flex';
             document.getElementById('playlistName').focus();
@@ -308,46 +304,43 @@
             document.getElementById('playlistName').value = '';
         }
 
-        // Close modal on escape key
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
                 hideCreatePlaylist();
             }
         });
 
-        // Close modal on background click
         document.getElementById('createPlaylistModal')?.addEventListener('click', function (e) {
             if (e.target === this) {
                 hideCreatePlaylist();
             }
         });
 
-        // Filter playlist function
-        // Filter playlist function - IMPROVED VERSION
+
         function filterPlaylist(playlistId, element) {
             currentFilter = playlistId;
 
-            // Update active state in sidebar
+
             document.querySelectorAll('.playlist-item').forEach(item => {
                 item.classList.remove('active');
             });
             element.classList.add('active');
 
-            // Update page title
+
             const playlistName = element.querySelector('.playlist-name').textContent;
             document.getElementById('pageTitle').textContent = playlistName;
 
-            // Filter songs
+
             const songCards = document.querySelectorAll('.song-card');
             const songsGrid = document.getElementById('songsGrid');
 
             if (playlistId === 'all') {
-                // Show all songs
+         
                 songCards.forEach(card => {
                     card.style.display = '';
                 });
             } else {
-                // Show only songs in selected playlist
+           
                 songCards.forEach(card => {
                     const songPlaylists = card.getAttribute('data-playlists').split(',');
                     if (songPlaylists.includes(playlistId.toString())) {
@@ -358,29 +351,28 @@
                 });
             }
 
-            // Clear search when filtering
+
             document.getElementById('searchInput').value = '';
         }
 
-        // Play song function
+
         function playSong(filePath, title, artist, button) {
             const audioPlayer = document.getElementById('audioPlayer');
             const currentSongTitle = document.getElementById('currentSongTitle');
             const currentSongArtist = document.getElementById('currentSongArtist');
 
-            // If clicking the same song that's playing, pause it
+   
             if (currentPlayingButton === button && !audioPlayer.paused) {
                 audioPlayer.pause();
                 updatePlayButton(button, false);
                 return;
             }
 
-            // Reset previous button
+      
             if (currentPlayingButton && currentPlayingButton !== button) {
                 updatePlayButton(currentPlayingButton, false);
             }
 
-            // Play new song
             audioPlayer.src = filePath;
             currentSongTitle.textContent = title;
             currentSongArtist.textContent = artist || '';
@@ -389,7 +381,7 @@
             currentPlayingButton = button;
             updatePlayButton(button, true);
 
-            // Update card state
+
             document.querySelectorAll('.song-card').forEach(card => {
                 card.classList.remove('playing');
             });
@@ -409,7 +401,7 @@
             }
         }
 
-        // Audio player event listeners
+
         const audioPlayer = document.getElementById('audioPlayer');
 
         audioPlayer.addEventListener('pause', function () {
@@ -431,7 +423,7 @@
             }
         });
 
-        // Search songs function
+
         function searchSongs() {
             const input = document.getElementById('searchInput').value.toLowerCase().trim();
             const songsGrid = document.getElementById('songsGrid');
@@ -440,7 +432,7 @@
             if (!songCards) return;
 
             for (let i = 0; i < songCards.length; i++) {
-                // Skip if card is already hidden by playlist filter
+
                 const songPlaylists = songCards[i].getAttribute('data-playlists').split(',');
                 const matchesFilter = currentFilter === 'all' || songPlaylists.includes(currentFilter.toString());
 
@@ -460,7 +452,7 @@
             }
         }
 
-        // Clear search on escape
+
         document.getElementById('searchInput')?.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
                 this.value = '';
